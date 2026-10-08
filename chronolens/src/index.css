@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0d0e15;
+  --card: #1e1f29;
+  --frame: #34364a;
+  --sakura: #ffb7c5;
+  --mint: #74eccf;
+  --gold: #e8d898;
+  --ink: #e6e6f0;
+  --dim: #8a8ca6;
+  --grid: rgba(116, 236, 207, 0.1);
+  --font-display: "Press Start 2P", "DotGothic16", monospace;
+  --font-body: "VT323", "DotGothic16", monospace;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    /* faint dither dots, drawn once, costs nothing at runtime */
+    background-image: radial-gradient(rgba(255, 183, 197, 0.06) 1px, transparent 1px);
+    background-size: 4px 4px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 20px;
+    line-height: 1.15;
+    -webkit-font-smoothing: none;
+    text-rendering: optimizeSpeed;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: var(--sakura);
+    color: var(--bg);
+  }
+  /* chunky pixel scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--sakura);
+    border: 2px solid var(--bg);
+  }
+  :focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* 3px frame with notched (stair-step) corners — the classic 8-bit window silhouette */
+  .pixel-box {
+    position: relative;
+    background: var(--card);
+    border: 3px solid var(--frame);
+    clip-path: polygon(
+      0 3px, 3px 3px, 3px 0,
+      calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px,
+      100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%,
+      3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px)
+    );
+  }
+
+  .pixel-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--accent, var(--mint));
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+  .pixel-titlebar .jp {
+    font-family: "DotGothic16", monospace;
+    font-size: 13px;
+    letter-spacing: 0;
+    opacity: 0.85;
+  }
+
+  /* tactile 8/16-bit switch: lit top-left edge, dark bottom-right edge, sinks 3px on press */
+  .pixel-btn {
+    --btn: var(--mint);
+    --btn-edge: #2f8f7a;
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 1;
+    padding: 9px 12px;
+    color: var(--bg);
+    background: var(--btn);
+    border: 3px solid var(--bg);
+    cursor: pointer;
+    user-select: none;
+    transform: translateY(0);
+    box-shadow:
+      inset 3px 3px 0 0 rgba(255, 255, 255, 0.4),
+      inset -3px -3px 0 0 rgba(0, 0, 0, 0.25),
+      0 4px 0 0 var(--btn-edge);
+  }
+  .pixel-btn:active,
+  .pixel-btn[aria-pressed="true"] {
+    transform: translateY(3px);
+    box-shadow:
+      inset 3px 3px 0 0 rgba(0, 0, 0, 0.25),
+      inset -3px -3px 0 0 rgba(255, 255, 255, 0.15),
+      0 1px 0 0 var(--btn-edge);
+  }
+  .pixel-btn.pink { --btn: var(--sakura); --btn-edge: #b3768a; }
+  .pixel-btn.gold { --btn: var(--gold); --btn-edge: #9d915a; }
+  .pixel-btn.ghost { --btn: var(--frame); --btn-edge: #1b1c28; color: var(--ink); }
+  .pixel-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .pixel-input {
+    font-family: var(--font-body);
+    font-size: 20px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 3px solid var(--frame);
+    padding: 3px 8px;
+    min-width: 0;
+  }
+  .pixel-input:focus { border-color: var(--mint); outline: none; }
+
+  /* looping retro grid for empty states (steps() keeps the scroll pixel-stepped) */
+  .retro-grid {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+    animation: grid-scroll 1.6s steps(8) infinite;
+  }
+
+  .pixel-canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    touch-action: none;
+  }
+
+  .label-dim { color: var(--dim); }
+  .jp-sub { font-family: "DotGothic16", monospace; font-size: 14px; color: var(--dim); }
+}
+
+/* ───────────── soft dithered CRT scanline overlay (toggle-able for low-end GPUs) ───────────── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.2) 2px,
+      rgba(0, 0, 0, 0.2) 3px
+    ),
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, 0.4) 100%);
+  animation: crt-flicker 5s steps(2) infinite;
+}
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.93; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-overlay,
+  .retro-grid,
+  .animate-blink {
+    animation: none !important;
+  }
+}
