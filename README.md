@@ -1,33 +1,22 @@
 # ChronoLens クロノレンズ
-Time-Travel Local State & Data Debugger — Tauri v2 · Rust · React · TypeScript · Tailwind.
+Time-Travel Local State & Data Debugger, Tauri v2 · Rust · React · TypeScript · Tailwind.
 
-Copyright © 2026 Albatany
-
-## Layout
-```
-chronolens/
-├── package.json · vite.config.ts · tsconfig.json · tailwind.config.js · postcss.config.js · index.html
-├── make_icons.py · app-icon.png         (placeholder icons; replace + run `npm run tauri icon app-icon.png`)
-├── .github/workflows/build.yml          (Linux + Windows bundles in CI)
-├── src/
-│   ├── main.tsx · App.tsx · index.css   (design tokens, CRT overlay, pixel buttons)
-│   ├── lib/        api.ts · types.ts · format.ts · palette.ts
-│   ├── hooks/      useTimeTravel.ts · useLogicalWidth.ts
-│   └── components/ TimelineLens.tsx · MemoryGraph.tsx · FileTree.tsx · EventLog.tsx
-│                   StatsPanel.tsx · ConfigBar.tsx · PixelWindow.tsx · PixelClock.tsx
-└── src-tauri/
-    ├── Cargo.toml · build.rs · tauri.conf.json · capabilities/default.json · icons/
-    └── src/        main.rs (hub thread + IPC) · store.rs (ring buffer + tests) · telemetry.rs (notify, sysinfo, #[cfg] platform code)
-```
+<img width="1920" height="1080" alt="screenshot_20261009_004914-region" src="https://github.com/user-attachments/assets/661decfa-6380-4473-8d05-cdc01cb7ca63" />
 
 ## Run (dev)
-```bash
+```
 npm install
 npm run tauri dev
 ```
 
-### CachyOS / Arch (Hyprland)
-```bash
+## If there's "error[E0599]: no associated function or constant named `new` found for struct `ProcessRefreshKind` in the current scope" kinda error
+```
+sed -i 's/ProcessRefreshKind::new()/ProcessRefreshKind::nothing()/g' src-tauri/src/telemetry.rs
+npm run tauri dev
+```
+
+### Arch Based
+```
 sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget file openssl \
   appmenu-gtk-module libappindicator-gtk3 librsvg xdotool nodejs npm rustup
 rustup default stable
@@ -47,6 +36,15 @@ Binary: `src-tauri/target/release/chronolens` (`chronolens.exe` on Windows); ins
 `src-tauri/target/release/bundle/`. Build each OS on that OS (or use the GitHub workflow).
 
 ## Tests
-```bash
+```
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
+
+<img width="1920" height="1080" alt="screenshot_20261009_004909-region" src="https://github.com/user-attachments/assets/4e64c88e-3401-433b-8f0e-2a97762a184d" />
+
+<br>
+
+##
+
+Copyright © 2026 Albatany
+
