@@ -1,5 +1,5 @@
 # ChronoLens クロノレンズ
-Time-Travel Local State & Data Debugger — Tauri v2 · Rust · React · TypeScript · Tailwind.
+Time-Travel Local State & Data Debugger, Tauri v2 · Rust · React · TypeScript · Tailwind.
 
 Copyright © 2026 Albatany
 
